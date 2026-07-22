@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Квест: Рыбалка</title>
+<style>
+  :root{
+    --deep:#083a5c;
+    --mid:#1279a8;
+    --light:#4fc3e8;
+    --foam:#eaf9ff;
+    --ink:#0a2e42;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:"Segoe UI","Trebuchet MS",system-ui,sans-serif;
+    -webkit-user-select:none; user-select:none;
+    overflow:hidden;
+  }
+  body{
+    min-height:100vh;
+    background:linear-gradient(180deg, var(--deep) 0%, var(--mid) 55%, var(--light) 100%);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink);
+    position:relative;
+  }
+  .fish{
+    position:fixed; z-index:0; opacity:0.55;
+    animation:swim linear infinite;
+  }
+  @keyframes swim{
+    0%{ transform:translateX(-20vw); }
+    100%{ transform:translateX(120vw); }
+  }
+  .waves{
+    position:fixed; left:0; right:0; bottom:0; z-index:1; line-height:0;
+  }
+  .waves svg{ width:200%; height:auto; animation:waveMove 9s linear infinite; }
+  .waves.back svg{ animation-duration:14s; opacity:0.6; }
+  @keyframes waveMove{
+    0%{ transform:translateX(0); }
+    100%{ transform:translateX(-50%); }
+  }
+  .card{
+    position:relative; z-index:2;
+    background:var(--foam);
+    border-radius:32px;
+    padding:36px 26px;
+    width:min(92vw, 460px);
+    text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,0.4), 0 0 0 6px rgba(255,255,255,0.4) inset;
+    border:3px solid rgba(255,255,255,0.7);
+  }
+  h1{
+    font-size:clamp(28px, 7.5vw, 42px);
+    margin:0 0 16px;
+    line-height:1.15;
+    color:var(--mid);
+    text-shadow:2px 2px 0 rgba(8,58,92,0.15);
+  }
+  p{
+    font-size:clamp(19px, 5vw, 24px);
+    line-height:1.55;
+    margin:0;
+    color:var(--ink);
+    font-weight:600;
+  }
+  .rod-svg{ width:130px; height:auto; margin:0 auto 10px; display:block; }
+</style>
+</head>
+<body>
+  <div class="fish" style="top:20%; animation-duration:16s; animation-delay:0s;">
+    <svg width="54" height="30" viewBox="0 0 54 30"><path d="M4 15 Q20 -3 40 15 Q20 33 4 15Z" fill="#eaf9ff"/><path d="M4 15 L-6 6 L-6 24 Z" fill="#eaf9ff"/><circle cx="34" cy="12" r="2.2" fill="#083a5c"/></svg>
+  </div>
+  <div class="fish" style="top:45%; animation-duration:22s; animation-delay:4s;">
+    <svg width="40" height="22" viewBox="0 0 54 30"><path d="M4 15 Q20 -3 40 15 Q20 33 4 15Z" fill="#c8f0ff"/><path d="M4 15 L-6 6 L-6 24 Z" fill="#c8f0ff"/><circle cx="34" cy="12" r="2" fill="#083a5c"/></svg>
+  </div>
+  <div class="fish" style="top:65%; animation-duration:19s; animation-delay:8s;">
+    <svg width="60" height="34" viewBox="0 0 54 30"><path d="M4 15 Q20 -3 40 15 Q20 33 4 15Z" fill="#eaf9ff"/><path d="M4 15 L-6 6 L-6 24 Z" fill="#eaf9ff"/><circle cx="34" cy="12" r="2.4" fill="#083a5c"/></svg>
+  </div>
+
+  <div class="card">
+    <svg class="rod-svg" viewBox="0 0 130 90">
+      <line x1="5" y1="80" x2="110" y2="10" stroke="#6b4a2b" stroke-width="5" stroke-linecap="round"/>
+      <path d="M110 10 Q120 45 60 78" fill="none" stroke="#0a2e42" stroke-width="2"/>
+      <circle cx="60" cy="78" r="4" fill="#ffb23d" stroke="#0a2e42" stroke-width="2"/>
+    </svg>
+    <h1 id="titleText"></h1>
+    <p id="bodyText"></p>
+  </div>
+
+  <div class="waves back">
+    <svg viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0 20 Q25 5 50 20 T100 20 T150 20 T200 20 V40 H0 Z" fill="#1279a8"/></svg>
+  </div>
+  <div class="waves">
+    <svg viewBox="0 0 200 30" preserveAspectRatio="none"><path d="M0 15 Q25 28 50 15 T100 15 T150 15 T200 15 V30 H0 Z" fill="#4fc3e8"/></svg>
+  </div>
+
+<script>
+  // ============================================================
+  // НАСТРОЙКИ СТРАНИЦЫ — меняйте текст здесь, ничего больше трогать не нужно
+  // ============================================================
+  const CONFIG = {
+    title: "Рыбалка",
+    bodyText: "Возьми найденный магнит, отправляйся на пирс — там ждёт удочка. Поймай то, что спрятано в воде."
+  };
+  // ============================================================
+
+  document.getElementById('titleText').textContent = CONFIG.title;
+  document.getElementById('bodyText').textContent = CONFIG.bodyText;
+</script>
+</body>
+</html>

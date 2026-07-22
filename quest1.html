@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Квест: Приглашение</title>
+<style>
+  :root{
+    --orange:#ffb27a;
+    --pink:#ff9ab8;
+    --purple:#c3a8f7;
+    --cream:#fff2e2;
+    --ink:#5b3b52;
+    --shadow-light:rgba(255,255,255,0.85);
+    --shadow-dark:rgba(150,90,60,0.35);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:"Segoe UI","Trebuchet MS",system-ui,sans-serif;
+    -webkit-user-select:none; user-select:none;
+    overflow:hidden;
+  }
+  body{
+    min-height:100vh;
+    background:linear-gradient(150deg, #ffd7b8 0%, #ffb7c9 45%, #cdb6f7 100%);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink);
+    position:relative;
+  }
+  .stripes{
+    position:fixed; inset:0; z-index:0; opacity:0.12; pointer-events:none;
+    background:repeating-linear-gradient(45deg, #fff 0 12px, transparent 12px 40px);
+  }
+  .balloon{
+    position:fixed; bottom:-20vh; z-index:0; opacity:0.95;
+    animation:rise linear infinite;
+    filter:drop-shadow(6px 10px 10px rgba(120,70,60,0.25));
+  }
+  @keyframes rise{
+    0%{ transform:translateY(0) translateX(0) rotate(-4deg); }
+    50%{ transform:translateY(-60vh) translateX(15px) rotate(4deg); }
+    100%{ transform:translateY(-125vh) translateX(-10px) rotate(-4deg); }
+  }
+  .card{
+    position:relative; z-index:1;
+    background:var(--cream);
+    border-radius:44px;
+    padding:38px 28px;
+    width:min(92vw, 460px);
+    text-align:center;
+    box-shadow:
+      -10px -10px 24px var(--shadow-light),
+      14px 16px 30px var(--shadow-dark),
+      inset 0 0 0 2px rgba(255,255,255,0.5);
+  }
+  .hidden{ display:none; }
+  h1{
+    font-size:clamp(30px, 8vw, 46px);
+    margin:0 0 18px;
+    line-height:1.15;
+    color:#e8608f;
+    text-shadow:0 2px 0 rgba(255,255,255,0.6);
+  }
+  p{
+    font-size:clamp(19px, 5vw, 24px);
+    line-height:1.5;
+    margin:0 0 26px;
+    color:var(--ink);
+    font-weight:600;
+  }
+  .icon-row{ font-size:44px; margin-bottom:6px; filter:drop-shadow(2px 4px 4px rgba(120,70,60,0.25)); }
+  .btn-main{
+    display:inline-block;
+    font-size:clamp(20px, 6vw, 26px);
+    font-weight:800;
+    color:#8a3d5e;
+    background:linear-gradient(160deg, #ffd8a8, #ff9ab8);
+    border:none;
+    border-radius:28px;
+    padding:20px 34px;
+    width:100%;
+    cursor:pointer;
+    box-shadow:
+      -6px -6px 14px rgba(255,255,255,0.7),
+      8px 10px 18px rgba(150,80,60,0.35);
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn-main:active{
+    transform:translateY(4px);
+    box-shadow:
+      -3px -3px 8px rgba(255,255,255,0.6),
+      3px 4px 8px rgba(150,80,60,0.3);
+  }
+  .boxes-svg{ width:120px; height:auto; margin:0 auto 18px; display:block; filter:drop-shadow(3px 6px 6px rgba(120,70,60,0.3)); }
+</style>
+</head>
+<body>
+  <div class="stripes"></div>
+  <div class="balloon" style="left:8%;  animation-duration:14s; animation-delay:0s;">
+    <svg width="46" height="60" viewBox="0 0 46 60"><ellipse cx="23" cy="22" rx="20" ry="22" fill="#ff9ab8"/><ellipse cx="16" cy="14" rx="6" ry="8" fill="#ffffff" opacity="0.45"/><path d="M23 44 L23 60" stroke="#c3a8f7" stroke-width="2"/><path d="M20 44 Q23 50 26 44" fill="#ff9ab8"/></svg>
+  </div>
+  <div class="balloon" style="left:75%; animation-duration:11s; animation-delay:2s;">
+    <svg width="40" height="52" viewBox="0 0 46 60"><ellipse cx="23" cy="22" rx="20" ry="22" fill="#ffc98a"/><ellipse cx="16" cy="14" rx="6" ry="8" fill="#ffffff" opacity="0.45"/><path d="M23 44 L23 60" stroke="#c3a8f7" stroke-width="2"/><path d="M20 44 Q23 50 26 44" fill="#ffc98a"/></svg>
+  </div>
+  <div class="balloon" style="left:45%; animation-duration:17s; animation-delay:5s;">
+    <svg width="36" height="47" viewBox="0 0 46 60"><ellipse cx="23" cy="22" rx="20" ry="22" fill="#c3a8f7"/><ellipse cx="16" cy="14" rx="6" ry="8" fill="#ffffff" opacity="0.45"/><path d="M23 44 L23 60" stroke="#ff9ab8" stroke-width="2"/><path d="M20 44 Q23 50 26 44" fill="#c3a8f7"/></svg>
+  </div>
+
+  <div id="screenIntro" class="card">
+    <div class="icon-row">🎉🎈🎁</div>
+    <h1 id="titleText"></h1>
+    <p id="introText"></p>
+    <button id="startBtn" class="btn-main"></button>
+  </div>
+
+  <div id="screenHint" class="card hidden">
+    <svg class="boxes-svg" viewBox="0 0 120 100">
+      <rect x="8" y="45" width="40" height="45" rx="10" fill="#ffc98a" stroke="#c3a8f7" stroke-width="3"/>
+      <rect x="8" y="45" width="40" height="14" rx="7" fill="#c3a8f7"/>
+      <ellipse cx="18" cy="55" rx="5" ry="6" fill="#ffffff" opacity="0.35"/>
+      <rect x="70" y="30" width="46" height="60" rx="10" fill="#ff9ab8" stroke="#c3a8f7" stroke-width="3"/>
+      <rect x="70" y="30" width="46" height="16" rx="8" fill="#c3a8f7"/>
+      <ellipse cx="80" cy="45" rx="5" ry="7" fill="#ffffff" opacity="0.35"/>
+      <path d="M93 30 L93 90" stroke="#fff" stroke-width="3"/>
+    </svg>
+    <p id="hintText"></p>
+  </div>
+
+<script>
+  // ============================================================
+  // НАСТРОЙКИ СТРАНИЦЫ — меняйте текст здесь, ничего больше трогать не нужно
+  // ============================================================
+  const CONFIG = {
+    title: "С днём рождения!",
+    intro: "Сегодня тебя ждёт настоящее приключение. Готова начать?",
+    startButtonText: "Начать игру",
+    hintText: "Где-то рядом спрятаны коробки с сюрпризами — в них ты найдёшь кусочки чего-то важного."
+  };
+  // ============================================================
+
+  document.getElementById('titleText').textContent = CONFIG.title;
+  document.getElementById('introText').textContent = CONFIG.intro;
+  document.getElementById('startBtn').textContent = CONFIG.startButtonText;
+  document.getElementById('hintText').textContent = CONFIG.hintText;
+
+  document.getElementById('startBtn').addEventListener('click', function(){
+    document.getElementById('screenIntro').classList.add('hidden');
+    document.getElementById('screenHint').classList.remove('hidden');
+  });
+</script>
+</body>
+</html>

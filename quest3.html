@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Квест: Шифр и код</title>
+<style>
+  :root{
+    --navy:#3a2e63;
+    --deep:#5b4590;
+    --gold:#ffc857;
+    --amber:#ff8a3d;
+    --cream:#fff6ea;
+    --ink:#4b3663;
+    --bad:#ff5470;
+    --good:#2fbb77;
+    --shadow-light:rgba(255,255,255,0.8);
+    --shadow-dark:rgba(90,60,110,0.4);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    font-family:"Segoe UI","Trebuchet MS",system-ui,sans-serif;
+    -webkit-user-select:none; user-select:none;
+  }
+  body{
+    min-height:100vh;
+    background:linear-gradient(150deg, #d9c8ff 0%, #ffc9a8 55%, #ffe0a3 100%);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--cream);
+    padding:24px 14px;
+  }
+  .card{
+    background:var(--cream);
+    color:var(--ink);
+    border-radius:44px;
+    padding:34px 24px;
+    width:min(94vw, 480px);
+    text-align:center;
+    box-shadow:
+      -10px -10px 24px var(--shadow-light),
+      14px 16px 30px var(--shadow-dark),
+      inset 0 0 0 2px rgba(255,255,255,0.5);
+  }
+  .hidden{ display:none; }
+  h1{
+    font-size:clamp(26px, 7vw, 38px);
+    margin:0 0 14px;
+    color:#c2410c;
+    text-shadow:1px 1px 0 rgba(255,138,61,0.2);
+  }
+  p{
+    font-size:clamp(17px, 4.6vw, 21px);
+    line-height:1.5;
+    margin:0 0 22px;
+    font-weight:600;
+  }
+  .legend{
+    font-size:15px;
+    line-height:1.5;
+    font-weight:600;
+    color:#7a5a2f;
+    background:#fff2d6;
+    border-radius:20px;
+    padding:14px 16px;
+    margin:-8px 0 20px;
+    text-align:left;
+    box-shadow:
+      inset -4px -4px 10px rgba(255,255,255,0.7),
+      inset 4px 4px 10px rgba(180,130,60,0.25);
+  }
+  /* ---- пароль ---- */
+  #passwordInput{
+    width:100%;
+    font-size:clamp(20px, 6vw, 26px);
+    font-weight:700;
+    text-align:center;
+    padding:18px 12px;
+    border-radius:22px;
+    border:none;
+    background:#fffaf0;
+    color:var(--ink);
+    margin-bottom:16px;
+    outline:none;
+    box-shadow:
+      inset -5px -5px 10px rgba(255,255,255,0.8),
+      inset 5px 5px 12px rgba(180,130,60,0.3);
+  }
+  #passwordInput.error{
+    border-color:var(--bad);
+    animation:shake .35s ease;
+  }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-10px); }
+    75%{ transform:translateX(10px); }
+  }
+  .msg-error{
+    color:var(--bad);
+    font-weight:800;
+    font-size:18px;
+    margin:-8px 0 16px;
+    min-height:24px;
+  }
+  .btn-main{
+    display:inline-block;
+    font-size:clamp(20px, 5.5vw, 25px);
+    font-weight:800;
+    color:#8a3d1c;
+    background:linear-gradient(160deg, #ffd8a8, #ff9a5a);
+    border:none;
+    border-radius:26px;
+    padding:18px 30px;
+    width:100%;
+    cursor:pointer;
+    box-shadow:
+      -6px -6px 14px rgba(255,255,255,0.7),
+      8px 10px 18px rgba(150,80,30,0.35);
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn-main:active{
+    transform:translateY(4px);
+    box-shadow:
+      -3px -3px 8px rgba(255,255,255,0.6),
+      3px 4px 8px rgba(150,80,30,0.3);
+  }
+  .btn-secondary{
+    display:inline-block;
+    margin-top:14px;
+    font-size:18px;
+    font-weight:700;
+    color:#c2410c;
+    background:#fff6ea;
+    border:none;
+    border-radius:20px;
+    padding:12px 20px;
+    width:100%;
+    cursor:pointer;
+    box-shadow:
+      -4px -4px 10px rgba(255,255,255,0.7),
+      5px 6px 12px rgba(150,80,30,0.25);
+  }
+  /* ---- mastermind ---- */
+  .digits{
+    display:flex; gap:10px; justify-content:center; margin-bottom:18px;
+  }
+  .digit-cell{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .stepper-btn{
+    width:56px; height:56px;
+    font-size:26px; font-weight:900;
+    border-radius:18px;
+    border:none;
+    background:#ffe2b3;
+    color:#c2410c;
+    cursor:pointer;
+    box-shadow:
+      -4px -4px 8px rgba(255,255,255,0.7),
+      5px 6px 10px rgba(180,130,60,0.3);
+  }
+  .stepper-btn:active{
+    box-shadow:
+      inset -3px -3px 6px rgba(255,255,255,0.6),
+      inset 3px 3px 6px rgba(180,130,60,0.3);
+  }
+  .digit-value{
+    width:64px; height:64px;
+    line-height:64px;
+    font-size:32px;
+    font-weight:900;
+    background:#fffaf0;
+    border:none;
+    border-radius:20px;
+    color:var(--ink);
+    box-shadow:
+      inset -4px -4px 8px rgba(255,255,255,0.8),
+      inset 4px 4px 10px rgba(180,130,60,0.3);
+  }
+  .attempts-info{
+    font-size:18px;
+    font-weight:800;
+    color:#c2410c;
+    margin-bottom:10px;
+  }
+  .history{
+    max-height:38vh;
+    overflow-y:auto;
+    margin:14px 0;
+    text-align:left;
+  }
+  .history-row{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    background:#fffaf0;
+    border:none;
+    border-radius:20px;
+    padding:10px 14px;
+    margin-bottom:10px;
+    font-weight:700;
+    font-size:16px;
+    gap:8px;
+    box-shadow:
+      -3px -3px 8px rgba(255,255,255,0.7),
+      4px 5px 10px rgba(180,130,60,0.2);
+  }
+  .history-code{
+    display:flex;
+    gap:6px;
+  }
+  .digit-chip{
+    width:44px;
+    border-radius:14px;
+    padding:6px 0 5px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    color:#fff;
+    box-shadow:
+      -2px -2px 5px rgba(255,255,255,0.35),
+      3px 4px 6px rgba(0,0,0,0.2);
+  }
+  .digit-chip .num{ font-size:19px; font-weight:900; line-height:1; }
+  .digit-chip .arrow{ font-size:13px; font-weight:800; line-height:1; margin-top:3px; }
+  .chip-exact{ background:#2fbb77; }
+  .chip-up{ background:#ff8a3d; }
+  .chip-down{ background:#3aa9d6; }
+  .history-result{
+    text-align:right;
+    font-size:14px;
+    line-height:1.4;
+  }
+  .pip-good{ color:var(--good); }
+  .pip-mid{ color:var(--amber); }
+</style>
+</head>
+<body>
+
+  <div id="screenPassword" class="card">
+    <h1 id="passTitle"></h1>
+    <p id="passIntro"></p>
+    <input id="passwordInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+    <div class="msg-error" id="passError"></div>
+    <button id="passBtn" class="btn-main"></button>
+  </div>
+
+  <div id="screenGame" class="card hidden">
+    <h1 id="gameTitle"></h1>
+    <p id="gameIntro"></p>
+    <p id="legendText" class="legend"></p>
+
+    <div class="digits" id="digitsRow"></div>
+    <button id="checkBtn" class="btn-main"></button>
+    <div class="attempts-info" id="attemptsInfo"></div>
+    <div class="history" id="historyBox"></div>
+    <button id="resetBtn" class="btn-secondary hidden"></button>
+  </div>
+
+  <div id="screenWin" class="card hidden">
+    <div style="font-size:44px; margin-bottom:6px;">🔑</div>
+    <h1 id="winTitle"></h1>
+    <p id="winText"></p>
+  </div>
+
+<script>
+  // ============================================================
+  // НАСТРОЙКИ СТРАНИЦЫ — меняйте значения здесь, ничего больше трогать не нужно
+  // ============================================================
+
+  // Слово-пароль, которое должно получиться из шифра по книге
+  const PASSWORD_WORD = "СЛОВО";
+
+  // Секретный код для игры Mastermind — ровно 4 цифры (0-9), можно повторять
+  const SECRET_CODE = "3170";
+
+  const MAX_ATTEMPTS = 8;
+
+  const TEXTS = {
+    passTitle: "Введи пароль",
+    passIntro: "Разгадай шифр по книге и впиши получившееся слово.",
+    passButton: "Войти",
+    passWrong: "Неверно. Попробуй ещё раз.",
+
+    gameTitle: "Разгадай код",
+    gameIntro: "В каждой ячейке — цифра от 0 до 9. Подбери секретный код за " + MAX_ATTEMPTS + " попыток.",
+    legend: "Как читать подсказку: под каждой введённой цифрой в списке попыток появится значок — ✓ значит цифра верная, ↑ значит настоящая цифра больше, ↓ значит настоящая цифра меньше. Справа — сколько цифр всего стоят в правильной ячейке и сколько угадано, но не в той ячейке. Если там написано «0» — значит таких цифр нет ни одной, это не намёк на цифру 0.",
+    checkButton: "Проверить",
+    attemptsLabel: "Осталось попыток: ",
+    exactLabel: "Цифр стоят в правильной ячейке",
+    presentLabel: "Цифр угадано, но не в той ячейке",
+    outOfAttempts: "Попытки закончились. Попробуй снова!",
+    resetButton: "Начать заново",
+
+    winTitle: "Код разгадан!",
+    winText: "Отлично! Последняя подсказка спрятана там, где ты видишь себя каждый день."
+  };
+  // ============================================================
+
+  document.getElementById('passTitle').textContent = TEXTS.passTitle;
+  document.getElementById('passIntro').textContent = TEXTS.passIntro;
+  document.getElementById('passBtn').textContent = TEXTS.passButton;
+  document.getElementById('gameTitle').textContent = TEXTS.gameTitle;
+  document.getElementById('gameIntro').textContent = TEXTS.gameIntro;
+  document.getElementById('legendText').textContent = TEXTS.legend;
+  document.getElementById('checkBtn').textContent = TEXTS.checkButton;
+  document.getElementById('resetBtn').textContent = TEXTS.resetButton;
+  document.getElementById('winTitle').textContent = TEXTS.winTitle;
+  document.getElementById('winText').textContent = TEXTS.winText;
+
+  // ---------- Пароль ----------
+  const passInput = document.getElementById('passwordInput');
+  const passError = document.getElementById('passError');
+
+  function normalize(s){
+    return s.trim().toLowerCase();
+  }
+
+  document.getElementById('passBtn').addEventListener('click', function(){
+    if(normalize(passInput.value) === normalize(PASSWORD_WORD)){
+      document.getElementById('screenPassword').classList.add('hidden');
+      document.getElementById('screenGame').classList.remove('hidden');
+    } else {
+      passError.textContent = TEXTS.passWrong;
+      passInput.classList.remove('error');
+      void passInput.offsetWidth;
+      passInput.classList.add('error');
+    }
+  });
+
+  // ---------- Mastermind ----------
+  const CODE_LENGTH = SECRET_CODE.length;
+  let currentGuess = new Array(CODE_LENGTH).fill(0);
+  let attemptsLeft = MAX_ATTEMPTS;
+  let solved = false;
+
+  const digitsRow = document.getElementById('digitsRow');
+  const historyBox = document.getElementById('historyBox');
+  const attemptsInfo = document.getElementById('attemptsInfo');
+  const checkBtn = document.getElementById('checkBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  function renderDigits(){
+    digitsRow.innerHTML = '';
+    for(let i=0;i<CODE_LENGTH;i++){
+      const cell = document.createElement('div');
+      cell.className = 'digit-cell';
+
+      const up = document.createElement('button');
+      up.className = 'stepper-btn';
+      up.textContent = '▲';
+      up.type = 'button';
+      up.addEventListener('click', (function(idx){
+        return function(){
+          currentGuess[idx] = (currentGuess[idx] + 1) % 10;
+          renderDigits();
+        };
+      })(i));
+
+      const val = document.createElement('div');
+      val.className = 'digit-value';
+      val.textContent = currentGuess[i];
+
+      const down = document.createElement('button');
+      down.className = 'stepper-btn';
+      down.textContent = '▼';
+      down.type = 'button';
+      down.addEventListener('click', (function(idx){
+        return function(){
+          currentGuess[idx] = (currentGuess[idx] + 9) % 10;
+          renderDigits();
+        };
+      })(i));
+
+      cell.appendChild(up);
+      cell.appendChild(val);
+      cell.appendChild(down);
+      digitsRow.appendChild(cell);
+    }
+  }
+
+  function updateAttemptsInfo(){
+    attemptsInfo.textContent = TEXTS.attemptsLabel + attemptsLeft;
+  }
+
+  function evaluateGuess(guessArr, secretStr){
+    const secretArr = secretStr.split('').map(Number);
+    let exact = 0;
+    const secretRemain = [];
+    const guessRemain = [];
+    for(let i=0;i<CODE_LENGTH;i++){
+      if(guessArr[i] === secretArr[i]){
+        exact++;
+      } else {
+        secretRemain.push(secretArr[i]);
+        guessRemain.push(guessArr[i]);
+      }
+    }
+    let present = 0;
+    const freq = {};
+    secretRemain.forEach(function(d){ freq[d] = (freq[d]||0) + 1; });
+    guessRemain.forEach(function(d){
+      if(freq[d] > 0){ present++; freq[d]--; }
+    });
+    return { exact: exact, present: present };
+  }
+
+  function addHistoryRow(guessArr, result){
+    const row = document.createElement('div');
+    row.className = 'history-row';
+
+    const codeSpan = document.createElement('div');
+    codeSpan.className = 'history-code';
+    const secretArr = SECRET_CODE.split('').map(Number);
+    for(let i=0;i<CODE_LENGTH;i++){
+      const chip = document.createElement('div');
+      const d = guessArr[i];
+      const s = secretArr[i];
+      let arrow, cls;
+      if(d === s){ arrow = '✓'; cls = 'chip-exact'; }
+      else if(d < s){ arrow = '↑'; cls = 'chip-up'; }
+      else { arrow = '↓'; cls = 'chip-down'; }
+      chip.className = 'digit-chip ' + cls;
+      chip.innerHTML = '<span class="num">' + d + '</span><span class="arrow">' + arrow + '</span>';
+      codeSpan.appendChild(chip);
+    }
+
+    const resSpan = document.createElement('div');
+    resSpan.className = 'history-result';
+    resSpan.innerHTML =
+      '<span class="pip-good">' + TEXTS.exactLabel + ': <b>' + result.exact + '</b></span><br>' +
+      '<span class="pip-mid">' + TEXTS.presentLabel + ': <b>' + result.present + '</b></span>';
+    row.appendChild(codeSpan);
+    row.appendChild(resSpan);
+    historyBox.insertBefore(row, historyBox.firstChild);
+  }
+
+  function showWinScreen(){
+    document.getElementById('screenGame').classList.add('hidden');
+    document.getElementById('screenWin').classList.remove('hidden');
+  }
+
+  checkBtn.addEventListener('click', function(){
+    if(solved || attemptsLeft <= 0) return;
+
+    const result = evaluateGuess(currentGuess, SECRET_CODE);
+    addHistoryRow(currentGuess.slice(), result);
+    attemptsLeft--;
+    updateAttemptsInfo();
+
+    if(result.exact === CODE_LENGTH){
+      solved = true;
+      showWinScreen();
+      return;
+    }
+
+    if(attemptsLeft <= 0){
+      checkBtn.disabled = true;
+      attemptsInfo.textContent = TEXTS.outOfAttempts;
+      resetBtn.classList.remove('hidden');
+    }
+  });
+
+  resetBtn.addEventListener('click', function(){
+    attemptsLeft = MAX_ATTEMPTS;
+    solved = false;
+    currentGuess = new Array(CODE_LENGTH).fill(0);
+    historyBox.innerHTML = '';
+    checkBtn.disabled = false;
+    resetBtn.classList.add('hidden');
+    updateAttemptsInfo();
+    renderDigits();
+  });
+
+  renderDigits();
+  updateAttemptsInfo();
+</script>
+</body>
+</html>

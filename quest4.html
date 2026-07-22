@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Квест: Финал</title>
+<style>
+  :root{
+    --navy:#0b1330;
+    --steel:#2b3a67;
+    --silver:#e7ecf5;
+    --gold:#ffc857;
+    --ink:#0b1330;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:"Segoe UI","Trebuchet MS",system-ui,sans-serif;
+    -webkit-user-select:none; user-select:none;
+    overflow:hidden;
+  }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 55%),
+      linear-gradient(180deg, var(--navy), var(--steel));
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink);
+  }
+  /* весь блок с текстом отражается по горизонтали — читается только через зеркало */
+  .mirror-frame{
+    transform: scaleX(-1);
+  }
+  .card{
+    background:var(--silver);
+    border-radius:28px;
+    padding:36px 26px;
+    width:min(92vw, 460px);
+    text-align:center;
+    box-shadow:0 0 0 8px rgba(255,200,87,0.5), 0 0 60px rgba(255,200,87,0.35), 0 20px 60px rgba(0,0,0,0.5);
+    border:3px solid #fff;
+  }
+  h1{
+    font-size:clamp(24px, 6.5vw, 32px);
+    margin:0 0 16px;
+    color:var(--steel);
+  }
+  p{
+    font-size:clamp(22px, 6.5vw, 30px);
+    line-height:1.5;
+    margin:0;
+    font-weight:800;
+    color:var(--ink);
+  }
+  .glint{
+    position:fixed;
+    top:0; bottom:0; width:40%;
+    background:linear-gradient(100deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation:sweep 5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes sweep{
+    0%{ left:-50%; }
+    100%{ left:110%; }
+  }
+</style>
+</head>
+<body>
+  <div class="glint"></div>
+  <div class="mirror-frame">
+    <div class="card">
+      <h1 id="lineHint"></h1>
+      <p id="lineLocation"></p>
+    </div>
+  </div>
+
+<script>
+  // ============================================================
+  // НАСТРОЙКИ СТРАНИЦЫ — впишите своё место здесь
+  // Внимание: весь текст на странице отражён (transform: scaleX(-1)) —
+  // прочитать его можно, только поднеся телефон экраном к зеркалу.
+  // ============================================================
+
+  // Короткая подсказка-заголовок над местом
+  const HINT_LINE = "Подарок ждёт здесь:";
+
+  // Место, где спрятан подарок — впишите своё
+  const GIFT_LOCATION = "В шкафу, на верхней полке, под голубым полотенцем";
+  // ============================================================
+
+  document.getElementById('lineHint').textContent = HINT_LINE;
+  document.getElementById('lineLocation').textContent = GIFT_LOCATION;
+</script>
+</body>
+</html>
