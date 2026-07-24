@@ -234,6 +234,22 @@
   }
   .pip-good{ color:var(--good); }
   .pip-mid{ color:var(--amber); }
+  .cipher-box{
+    display:flex;
+    justify-content:center;
+    gap:22px;
+    font-size:clamp(26px, 8vw, 36px);
+    font-weight:900;
+    color:#c2410c;
+    background:#fff2d6;
+    border-radius:20px;
+    padding:16px 12px;
+    margin:0 0 22px;
+    letter-spacing:2px;
+    box-shadow:
+      inset -4px -4px 10px rgba(255,255,255,0.7),
+      inset 4px 4px 10px rgba(180,130,60,0.25);
+  }
 </style>
 </head>
 <body>
@@ -241,9 +257,11 @@
   <div id="screenPassword" class="card">
     <h1 id="passTitle"></h1>
     <p id="passIntro"></p>
+    <div id="passCipher" class="cipher-box"></div>
     <input id="passwordInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
     <div class="msg-error" id="passError"></div>
     <button id="passBtn" class="btn-main"></button>
+    <p id="passHint" class="legend hidden"></p>
   </div>
 
   <div id="screenGame" class="card hidden">
@@ -270,18 +288,20 @@
   // ============================================================
 
   // Слово-пароль, которое должно получиться из шифра по книге
-  const PASSWORD_WORD = "СЛОВО";
+  const PASSWORD_WORD = "Дракон";
 
   // Секретный код для игры Mastermind — ровно 4 цифры (0-9), можно повторять
-  const SECRET_CODE = "3170";
+  const SECRET_CODE = "1505";
 
   const MAX_ATTEMPTS = 8;
 
   const TEXTS = {
     passTitle: "Введи пароль",
-    passIntro: "Разгадай шифр по книге и впиши получившееся слово.",
+    passIntro: "Тебе нужна книга автора Кристофера Паолини.",
+    passCipher: "63 — 2 — 6",
     passButton: "Войти",
     passWrong: "Неверно. Попробуй ещё раз.",
+    passHint: "Подсказка: 63 — страница, 2 — строка, 6 — слово.",
 
     gameTitle: "Разгадай код",
     gameIntro: "В каждой ячейке — цифра от 0 до 9. Подбери секретный код за " + MAX_ATTEMPTS + " попыток.",
@@ -294,12 +314,13 @@
     resetButton: "Начать заново",
 
     winTitle: "Код разгадан!",
-    winText: "Отлично! Последняя подсказка спрятана там, где ты видишь себя каждый день."
+    winText: "Отлично! Перейти на следующий этап тебе поможет Стивен Кинг."
   };
   // ============================================================
 
   document.getElementById('passTitle').textContent = TEXTS.passTitle;
   document.getElementById('passIntro').textContent = TEXTS.passIntro;
+  document.getElementById('passCipher').textContent = TEXTS.passCipher;
   document.getElementById('passBtn').textContent = TEXTS.passButton;
   document.getElementById('gameTitle').textContent = TEXTS.gameTitle;
   document.getElementById('gameIntro').textContent = TEXTS.gameIntro;
@@ -312,6 +333,9 @@
   // ---------- Пароль ----------
   const passInput = document.getElementById('passwordInput');
   const passError = document.getElementById('passError');
+  const passHint = document.getElementById('passHint');
+  const WRONG_ATTEMPTS_FOR_HINT = 5;
+  let passWrongCount = 0;
 
   function normalize(s){
     return s.trim().toLowerCase();
@@ -322,10 +346,15 @@
       document.getElementById('screenPassword').classList.add('hidden');
       document.getElementById('screenGame').classList.remove('hidden');
     } else {
+      passWrongCount++;
       passError.textContent = TEXTS.passWrong;
       passInput.classList.remove('error');
       void passInput.offsetWidth;
       passInput.classList.add('error');
+      if(passWrongCount >= WRONG_ATTEMPTS_FOR_HINT){
+        passHint.textContent = TEXTS.passHint;
+        passHint.classList.remove('hidden');
+      }
     }
   });
 
